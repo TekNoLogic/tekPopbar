@@ -2,6 +2,10 @@
 local _, _, _, enabled = GetAddOnInfo("tekPopBar")
 if not enabled then return end
 
+local factory = tekPopBar_MakeButton
+tekPopBar_MakeButton = nil
+
+
 local _, class = UnitClass("player")
 
 local usebars = {4, 10}
@@ -39,17 +43,18 @@ end
 
 local anch1 = MultiBarRightButton1
 for actionID=36,25,-1 do
-	local mainbtn = CreateFrame("CheckButton", "tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureAnchorEnterTemplate")
-	_G["tekPopbar"..actionID.."Name"]:Hide()
-	_G["tekPopbar"..actionID.."Name"].Show = _G["tekPopbar"..actionID.."Name"].Hide
+	local mainbtn = factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureAnchorEnterTemplate")
+--~ 	local mainbtn = CreateFrame("CheckButton", "tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureAnchorEnterTemplate")
+--~ 	_G["tekPopbar"..actionID.."Name"]:Hide()
+--~ 	_G["tekPopbar"..actionID.."Name"].Show = _G["tekPopbar"..actionID.."Name"].Hide
 	mainbtn:SetPoint("BOTTOM", anch1, "TOP", 0, -gap)
-	ids[mainbtn] = actionID
-	icons[mainbtn] = _G["tekPopbar"..actionID.."Icon"]
-	onupdates[mainbtn] = mainbtn:GetScript("OnUpdate")
-	mainbtn:SetScript("OnUpdate", OnUpdate)
-	mainbtn:SetScript("OnAttributeChanged", ActionButton_Update)
-	mainbtn:HookScript("OnEnter", ActionButton_SetTooltip)
-	mainbtn:HookScript("OnLeave", HideTooltip)
+--~ 	ids[mainbtn] = actionID
+--~ 	icons[mainbtn] = _G["tekPopbar"..actionID.."Icon"]
+--~ 	onupdates[mainbtn] = mainbtn:GetScript("OnUpdate")
+--~ 	mainbtn:SetScript("OnUpdate", OnUpdate)
+--~ 	mainbtn:SetScript("OnAttributeChanged", ActionButton_Update)
+--~ 	mainbtn:HookScript("OnEnter", ActionButton_SetTooltip)
+--~ 	mainbtn:HookScript("OnLeave", HideTooltip)
 	mainbtn:SetAttribute("*type*", "action")
 	mainbtn:SetAttribute("*action*", actionID)
 	mainbtn:SetAttribute("*childraise-OnEnter", true)
@@ -68,14 +73,14 @@ for actionID=36,25,-1 do
 	local anch2 = mainbtn
 	for _,bar in ipairs(usebars) do
 		local btnID = actionID - 36 + bar*12
-		local btn = CreateFrame("CheckButton", "tekPopbar"..btnID, hdr, "ActionBarButtonTemplate")
-		_G["tekPopbar"..btnID.."Name"]:Hide()
-		_G["tekPopbar"..btnID.."Name"].Show = _G["tekPopbar"..btnID.."Name"].Hide
-		ids[btn] = btnID
-		icons[btn] = _G["tekPopbar"..btnID.."Icon"]
-		onupdates[btn] = btn:GetScript("OnUpdate")
-		btn:SetScript("OnUpdate", OnUpdate)
-		btn:SetScript("OnAttributeChanged", ActionButton_Update)
+		local btn = factory("tekPopbar"..btnID, hdr, "ActionBarButtonTemplate")
+--~ 		_G["tekPopbar"..btnID.."Name"]:Hide()
+--~ 		_G["tekPopbar"..btnID.."Name"].Show = _G["tekPopbar"..btnID.."Name"].Hide
+--~ 		ids[btn] = btnID
+--~ 		icons[btn] = _G["tekPopbar"..btnID.."Icon"]
+--~ 		onupdates[btn] = btn:GetScript("OnUpdate")
+--~ 		btn:SetScript("OnUpdate", OnUpdate)
+--~ 		btn:SetScript("OnAttributeChanged", ActionButton_Update)
 		btn:SetAttribute("hidestates", 0)
 		btn:SetAttribute("*type*", "action")
 		btn:SetAttribute("*action*", btnID)

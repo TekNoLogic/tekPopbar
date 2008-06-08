@@ -3,26 +3,15 @@
 -- cat = 7, moon/tree = 8, bear = 9
 -- battle = 7, def = 8, berz = 9
 -- stealth = 7
-
+-- shadow = 6
 
 local factory = tekPopBar_MakeButton
-tekPopBar_MakeButton = nil
 
 
 local _G = _G
 local _, class = UnitClass("player")
 local usebars = {2,5,6}
 local gap = 5
-local onupdates, colors = {}, {
-	none = {1.0, 1.0, 1.0},
-	grey = {0.4, 0.4, 0.4},
-	blue = {0.1, 0.3, 1.0},
-	red  = {0.8, 0.1, 0.1},
-}
-local events = {
-	"ACTIONBAR_UPDATE_STATE", "ACTIONBAR_UPDATE_USABLE", "UPDATE_INVENTORY_ALERTS", "PLAYER_AURAS_CHANGED", "PLAYER_TARGET_CHANGED",
-	"CRAFT_SHOW", "CRAFT_CLOSE", "TRADE_SKILL_SHOW", "TRADE_SKILL_CLOSE", "PLAYER_ENTER_COMBAT", "PLAYER_LEAVE_COMBAT", "START_AUTOREPEAT_SPELL", "STOP_AUTOREPEAT_SPELL",
-}
 
 
 local function PermaHide(frame)
@@ -35,20 +24,19 @@ end
 --      Create mah buttons!      --
 -----------------------------------
 
-local _G = getfenv()
 local anch1 = ChatFrame1
 
 local driver = CreateFrame("Frame", nil, UIParent, "SecureStateDriverTemplate")
 if class == "DRUID" then
 	driver:SetAttribute("statemap-stance", "$input")
-	driver:SetAttribute("statebutton", "1:bear;3:cat;5:moon")
+	driver:SetAttribute("statebutton", "1:bear;2:cat;5:moon")
 elseif class == "PRIEST" then
 	driver:SetAttribute("statemap-stance", "$input")
 	driver:SetAttribute("statebutton", "1:shadowform")
 end
 
 for actionID=1,12 do
-	local mainbtn = factory("CheckButton", "tekPopbar"..actionID, driver, "ActionBarButtonTemplate,SecureAnchorEnterTemplate")
+	local mainbtn = factory("tekPopbar"..actionID, driver, "ActionBarButtonTemplate,SecureAnchorEnterTemplate")
 	mainbtn:SetPoint("LEFT", anch1, "RIGHT", (actionID == 4 or actionID == 9) and gap * 2.5 or gap, 0)
 	if class == "DRUID" or class == "PRIEST" then
 		driver:SetAttribute('addchild', mainbtn)
@@ -80,7 +68,7 @@ for actionID=1,12 do
 	local anch2 = mainbtn
 	for _,bar in ipairs(usebars) do
 		local btnID = actionID - 12 + bar*12
-		local btn = factory("CheckButton", "tekPopbar"..btnID, hdr, "ActionBarButtonTemplate")
+		local btn = factory("tekPopbar"..btnID, hdr, "ActionBarButtonTemplate")
 		btn:SetAttribute("hidestates", 0)
 		btn:SetAttribute("type", "action")
 		btn:SetAttribute("*action*", btnID)

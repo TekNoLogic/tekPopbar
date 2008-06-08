@@ -1,15 +1,7 @@
 
--- Bars:
--- cat = 7, moon/tree = 8, bear = 9
--- battle = 7, def = 8, berz = 9
--- stealth = 7
-
 
 local _G = _G
-local _, class = UnitClass("player")
-local usebars = {2,5,6}
-local gap = 5
-local onupdates, colors = {}, {
+local colors = {
 	none = {1.0, 1.0, 1.0},
 	grey = {0.4, 0.4, 0.4},
 	blue = {0.1, 0.3, 1.0},
@@ -27,22 +19,27 @@ end
 
 
 
+local function ActionButton_UpdateState(self)
+	self:SetChecked((IsCurrentAction(self.action) or IsAutoRepeatAction(self.action)) and 1 or 0)
+end
+
+
 local function ActionButton_UpdateFlash(self)
 	if IsAttackAction(self.action) and IsCurrentAction(self.action) or IsAutoRepeatAction(self.action) then
 		self.flashtime = 0
-		ActionButton_UpdateState()
+		ActionButton_UpdateState(self)
 	else
 		self.flashtime = nil
 		self.flash:Hide()
-		ActionButton_UpdateState()
+		ActionButton_UpdateState(self)
 	end
 end
 
 
 local function ActionButton_Update(self)
 	local texture = GetActionTexture(self.action)
+	self.icon:SetTexture(texture)
 	if texture then
-		self.icon:SetTexture(texture)
 		self.icon:Show()
 		self:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2")
 	else
@@ -51,7 +48,7 @@ local function ActionButton_Update(self)
 		self:SetNormalTexture("Interface\\Buttons\\UI-Quickslot")
 	end
 
-	ActionButton_UpdateCount()
+	self.count:SetText((IsConsumableAction(self.action) or IsStackableAction(self.action)) and GetActionCount(self.action) or "")
 
 	if HasAction(self.action) then
 		if not self.eventsRegistered then
@@ -59,7 +56,7 @@ local function ActionButton_Update(self)
 			self.eventsRegistered = 1
 		end
 
-		ActionButton_UpdateState()
+		ActionButton_UpdateState(self)
 --~ 		ActionButton_UpdateUsable()
 		CooldownFrame_SetTimer(self.cooldown, GetActionCooldown(self.action))
 		ActionButton_UpdateFlash(self)
@@ -68,17 +65,14 @@ local function ActionButton_Update(self)
 			for _,event in pairs(events) do self:UnregisterEvent(event) end
 			self.eventsRegistered = nil
 		end
-
-		if self.showgrid ~= 0 then self.cooldown:Hide() end
 	end
 
 	-- Add a green border if button is an equipped item
-	local border = _G[self:GetName().."Border"]
 	if IsEquippedAction(self.action) then
-		border:SetVertexColor(0, 1.0, 0, 0.35)
-		border:Show()
+		self.border:SetVertexColor(0, 1.0, 0, 0.35)
+		self.border:Show()
 	else
-		border:Hide()
+		self.border:Hide()
 	end
 
 	-- Update tooltip
@@ -92,9 +86,13 @@ end
 
 local function OnUpdate(self, elapsed, ...)
 	local id = SecureButton_GetModifiedAttribute(self, "action", SecureButton_GetEffectiveButton(self)) or 1
-	if id ~= self.action then
+	if self.action ~= id then
 		self.action = id
 		ActionButton_Update(self)
+--~ 	else
+--~ 		self.icon:Hide()
+--~ 		self.cooldown:Hide()
+--~ 		self:SetNormalTexture("Interface\\Buttons\\UI-Quickslot")
 	end
 
 	local oor, isUsable, notEnoughMana = IsActionInRange(id), IsUsableAction(id)
@@ -116,7 +114,7 @@ end
 
 local function OnReceiveDrag(self)
 	PlaceAction(self.action)
-	ActionButton_UpdateState()
+	ActionButton_UpdateState(self)
 	ActionButton_UpdateFlash(self)
 end
 
@@ -132,85 +130,56 @@ local function HideTooltip(frame)
 end
 
 
-local function ActionButton_OnLoad(self)
-	self.showgrid = 0
-	self:SetAttribute("type", "action")
-	self:SetAttribute("checkselfcast", true)
-	self:SetAttribute("useparent-unit", true)
-	self:SetAttribute("useparent-actionpage", true)
-	self:RegisterForDrag("LeftButton", "RightButton")
-	self:RegisterForClicks("AnyUp")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("ACTIONBAR_SHOWGRID")
-	self:RegisterEvent("ACTIONBAR_HIDEGRID")
-	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
-
-	local action = ActionButton_CalculateAction(self)
-	if action ~= self.action then
-		self.action = action
-		ActionButton_Update(self)
-	end
-end
-
-
 local function OnDragStart(self)
 	if LOCK_ACTIONBAR ~= "1" or IsModifiedClick("PICKUPACTION") then
 		PickupAction(self.action)
-		ActionButton_UpdateState()
+		ActionButton_UpdateState(self)
 		ActionButton_UpdateFlash(self)
 	end
 end
 
-local function ActionButton_OnEvent(self, event, a1)
+local function ActionButton_OnEvent(self, event, action)
 	if event == "ACTIONBAR_UPDATE_COOLDOWN" then return UpdateCooldown(self) end
-	if event == "ACTIONBAR_SLOT_CHANGED" and (a1 ~= 0 or a1 == self.action) or event == "PLAYER_ENTERING_WORLD" then return ActionButton_Update(self) end
-
---~ 	if ( event == "ACTIONBAR_SHOWGRID" ) then
---~ 		ActionButton_ShowGrid();
---~ 		return;
---~ 	end
---~ 	if ( event == "ACTIONBAR_HIDEGRID" ) then
---~ 		ActionButton_HideGrid();
---~ 		return;
---~ 	end
+	if event == "ACTIONBAR_SLOT_CHANGED" and (action ~= 0 or action == self.action) or event == "PLAYER_ENTERING_WORLD" then return ActionButton_Update(self) end
 
 	-- All event handlers below this line are only set when the button has an action
 
-	if event == "ACTIONBAR_UPDATE_STATE" or event == "CRAFT_SHOW" or event == "CRAFT_CLOSE" or event == "TRADE_SKILL_SHOW" or event == "TRADE_SKILL_CLOSE" then return ActionButton_UpdateState()
-	elseif event == "PLAYER_ENTER_COMBAT" then
-		if IsAttackAction(self.action) then
-			self.flashtime = 0
-			ActionButton_UpdateState()
-		end
-	elseif event == "PLAYER_LEAVE_COMBAT" then
-		if IsAttackAction(self.action) then
-			self.flashtime = nil
-			self.flash:Hide()
-			ActionButton_UpdateState()
-		end
-	elseif event == "START_AUTOREPEAT_SPELL" then
-		if IsAutoRepeatAction(self.action) then
-			self.flashtime = 0
-			ActionButton_UpdateState()
-		end
-	elseif event == "STOP_AUTOREPEAT_SPELL" then
-		if self.flashtime and not IsAttackAction(self.action) then
-			self.flashtime = nil
-			self.flash:Hide()
-			ActionButton_UpdateState()
-		end
+	if event == "ACTIONBAR_UPDATE_STATE" or event == "CRAFT_SHOW" or event == "CRAFT_CLOSE" or event == "TRADE_SKILL_SHOW" or event == "TRADE_SKILL_CLOSE" then
+		return ActionButton_UpdateState(self)
+	elseif event == "PLAYER_ENTER_COMBAT" and IsAttackAction(self.action) or event == "START_AUTOREPEAT_SPELL" and IsAutoRepeatAction(self.action) then
+		self.flashtime = 0
+		return ActionButton_UpdateState(self)
+	elseif event == "PLAYER_LEAVE_COMBAT" and IsAttackAction(self.action) or event == "STOP_AUTOREPEAT_SPELL" and self.flashtime and not IsAttackAction(self.action) then
+		self.flashtime = nil
+		self.flash:Hide()
+		return ActionButton_UpdateState(self)
 	end
 end
 
 
-local function makeframe(name, parent, inherit)
+function tekPopBar_MakeButton(name, parent, inherit)
 	inherit = inherit and "SecureActionButtonTemplate,"..inherit or "SecureActionButtonTemplate"
 	local b = CreateFrame("CheckButton", name, parent, inherit)
 	b:SetWidth(36) b:SetHeight(36)
-	b:SetScript("OnEvent", ActionButton_OnEvent)
+	b:Show()
+
 	b:SetScript("PostClick", ActionButton_UpdateState)
+	b:SetScript("OnEvent", ActionButton_OnEvent)
+	b:SetScript("OnUpdate", OnUpdate)
 	b:SetScript("OnDragStart", OnDragStart)
 	b:SetScript("OnReceiveDrag", OnReceiveDrag)
+	b:HookScript("OnEnter", ActionButton_SetTooltip)
+	b:HookScript("OnLeave", HideTooltip)
+
+	b:RegisterEvent("PLAYER_ENTERING_WORLD")
+	b:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+	b:RegisterForDrag("LeftButton", "RightButton")
+	b:RegisterForClicks("AnyUp")
+
+	b:SetAttribute("type", "action")
+	b:SetAttribute("checkselfcast", true)
+	b:SetAttribute("useparent-unit", true)
+	b:SetAttribute("useparent-actionpage", true)
 
 	b.icon = b:CreateTexture(nil, "BACKGROUND")
 	b.icon:SetAllPoints()
@@ -244,18 +213,16 @@ local function makeframe(name, parent, inherit)
 	b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square") --ADD
 	b:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight") --ADD
 
-	ActionButton_OnLoad(b)
-
-	return b
-end
-
-
-function tekPopBar_MakeButton(frametype, name, parent, inherit)
-	local b = makeframe(name, parent, inherit)
-	b:SetScript("OnUpdate", OnUpdate)
+	b.action = ActionButton_CalculateAction(b)
+	ActionButton_Update(b)
 	b:SetScript("OnAttributeChanged", ActionButton_Update)
-	b:HookScript("OnEnter", ActionButton_SetTooltip)
-	b:HookScript("OnLeave", HideTooltip)
+
+	-- Cleanup
+	local icon = name and _G[name.."Icon"]
+	icon:Hide()
+	icon.Show = icon.Hide
+
 	return b
 end
+
 
