@@ -26,33 +26,29 @@ end
 
 local anch1 = ChatFrame1
 
-local driver = CreateFrame("Frame", nil, UIParent, "SecureStateDriverTemplate")
-if class == "DRUID" then
-	driver:SetAttribute("statemap-stance", "$input")
-	driver:SetAttribute("statebutton", "1:bear;2:cat;5:moon")
-elseif class == "PRIEST" then
-	driver:SetAttribute("statemap-stance", "$input")
-	driver:SetAttribute("statebutton", "1:shadowform")
-end
+local driver = CreateFrame("Frame", nil, UIParent, "SecureStateHeaderTemplate")
+RegisterStateDriver(driver, "state", "[bonusbar:1]1;[bonusbar:2]2;[bonusbar:3]3;[bonusbar:4]4;[bonusbar:5]5;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
+driver:SetAttribute("statemap-state", "$input")
+driver:SetAttribute("statebutton", "1:won;2:tew;3:twee;4:foah;5:fyve")
 
+local possbar = {
+	132,      121,      124, -- nil            attack          action1
+	122, 131, 125, 126, 127, -- follow nil     action2 action3 action4
+	123, 128, 129, 130,      -- stay   aggro   defen   passive
+}
 for actionID=1,12 do
 	local mainbtn = factory("tekPopbar"..actionID, driver, "ActionBarButtonTemplate,SecureAnchorEnterTemplate")
 	mainbtn:SetPoint("LEFT", anch1, "RIGHT", (actionID == 4 or actionID == 9) and gap * 2.5 or gap, 0)
-	if class == "DRUID" or class == "PRIEST" then
-		driver:SetAttribute('addchild', mainbtn)
-		mainbtn:SetAttribute('useparent-statebutton', 'true')
-	end
+	driver:SetAttribute('addchild', mainbtn)
+	mainbtn:SetAttribute('useparent-statebutton', 'true')
 	mainbtn:SetAttribute("*childraise-OnEnter", true)
 	mainbtn:SetAttribute("*childstate-OnEnter", "enter")
 	mainbtn:SetAttribute("*childstate-OnLeave", "leave")
-	if class == "DRUID" then
-		mainbtn:SetAttribute("*action-cat", 6*12 + actionID) -- cat
-		mainbtn:SetAttribute("*action-moon", 7*12 + actionID) -- moonkin/tree
-		mainbtn:SetAttribute("*action-bear", 8*12 + actionID) -- bear
-	end
-	if class == "PRIEST" then
-		mainbtn:SetAttribute("*action-shadowform", 6*12 + actionID)
-	end
+	mainbtn:SetAttribute("*action-won", 6*12 + actionID)
+	mainbtn:SetAttribute("*action-tew", 7*12 + actionID)
+	mainbtn:SetAttribute("*action-twee", 8*12 + actionID)
+	mainbtn:SetAttribute("*action-foah", 9*12 + actionID)
+	mainbtn:SetAttribute("*action-fyve", possbar[actionID])
 	mainbtn:SetAttribute("*action*", actionID)
 
 
@@ -93,30 +89,13 @@ MainMenuBar:Hide()
 --------------------------------
 
 local f = CreateFrame("Frame", "BonusActionBarParent", UIParent)
+f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, -100) f:SetWidth(1) f:SetHeight(1)
 BonusActionBarFrame:SetParent(f)
 
-if class == "DRUID" or class == "PRIEST" or class == "WARRIOR" then
-	f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, -100) f:SetWidth(1) f:SetHeight(1)
-	return
-else
-	f:SetPoint("BOTTOMLEFT", tekPopbar1, "BOTTOMLEFT", -8, -4) f:SetWidth(1) f:SetHeight(36)
 
-	PermaHide(BonusActionBarTexture0)
-	PermaHide(BonusActionBarTexture1)
-	for i=1,12 do
-		PermaHide(_G["BonusActionButton"..i.."Name"])
-		PermaHide(_G["BonusActionButton"..i.."HotKey"])
-		_G["BonusActionButton"..i]:SetNormalTexture("")
-	end
-
-	BonusActionBarFrame:SetScript("OnShow", function() for i=1,12 do _G["tekPopbar"..i]:SetAlpha(.25) end end)
-	BonusActionBarFrame:SetScript("OnHide", function() for i=1,12 do _G["tekPopbar"..i]:SetAlpha(1) end end)
-end
-
-
----------------------------
---      Possess Bar      --
----------------------------
+--~ ---------------------------
+--~ --      Possess Bar      --
+--~ ---------------------------
 
 PossessBarFrame:SetParent(UIParent)
 PossessButton1:SetNormalTexture("")
