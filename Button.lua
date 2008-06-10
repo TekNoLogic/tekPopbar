@@ -139,6 +139,13 @@ local function OnDragStart(self)
 end
 
 local function ActionButton_OnEvent(self, event, action)
+	if event == "UPDATE_BINDINGS" then
+		self:UnregisterEvent("UPDATE_BINDINGS")
+		local id = self:GetAttribute("*action*")
+		if id <= 12 then SetOverrideBindingClick(UIParent, nil, select(2, GetBinding(29 + id)), "tekPopbar"..id) end
+		return
+	end
+
 	if event == "ACTIONBAR_UPDATE_COOLDOWN" then return UpdateCooldown(self) end
 	if event == "ACTIONBAR_SLOT_CHANGED" and (action ~= 0 or action == self.action) or event == "PLAYER_ENTERING_WORLD" then return ActionButton_Update(self) end
 

@@ -51,6 +51,8 @@ for actionID=1,12 do
 	mainbtn:SetAttribute("*action-fyve", possbar[actionID])
 	mainbtn:SetAttribute("*action*", actionID)
 
+	mainbtn:RegisterEvent("UPDATE_BINDINGS")
+
 
 	local hdr = CreateFrame("Frame", "tekPopbarHdr"..actionID, mainbtn, "SecureStateHeaderTemplate")
 	hdr:SetPoint("CENTER") hdr:SetWidth(2) hdr:SetHeight(2)
