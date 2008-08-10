@@ -1,6 +1,7 @@
 
 
 local _G = _G
+local function noop() end
 local colors = {
 	none = {1.0, 1.0, 1.0},
 	grey = {0.4, 0.4, 0.4},
@@ -164,9 +165,18 @@ local function ActionButton_OnEvent(self, event, action)
 end
 
 
+local function SetUpdater(self)
+	self:SetScript("OnAttributeChanged", ActionButton_Update)
+	self.SetUpdater = nil
+
+	ActionButton_Update(self)
+end
+
+
 function tekPopBar_MakeButton(name, parent, inherit)
 	inherit = inherit and "SecureActionButtonTemplate,"..inherit or "SecureActionButtonTemplate"
 	local b = CreateFrame("CheckButton", name, parent, inherit)
+--~ 	local b = CreateFrame("CheckButton", name, parent, "SecureActionButtonTemplate")
 	b:SetWidth(36) b:SetHeight(36)
 	b:Show()
 
@@ -211,10 +221,12 @@ function tekPopBar_MakeButton(name, parent, inherit)
 	b.cooldown:SetWidth(36) b.cooldown:SetHeight(36)
 	b.cooldown:SetPoint("CENTER", 0, -1)
 
-	b:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2")
-	local norm = b:GetNormalTexture()
-	norm:SetWidth(66) norm:SetHeight(66)
-	norm:SetPoint("CENTER", 0, -1)
+	b:SetNormalTexture(nil)
+	b.SetNormalTexture = noop
+--~ 	b:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2")
+--~ 	local norm = b:GetNormalTexture()
+--~ 	norm:SetWidth(66) norm:SetHeight(66)
+--~ 	norm:SetPoint("CENTER", 0, -1)
 
 	b:SetPushedTexture("Interface\\Buttons\\UI-Quickslot-Depress")
 	b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square") --ADD
@@ -222,12 +234,20 @@ function tekPopBar_MakeButton(name, parent, inherit)
 
 	b.action = ActionButton_CalculateAction(b)
 	ActionButton_Update(b)
-	b:SetScript("OnAttributeChanged", ActionButton_Update)
+	b.SetUpdater = SetUpdater
 
 	-- Cleanup
 	local icon = name and _G[name.."Icon"]
-	icon:Hide()
-	icon.Show = icon.Hide
+	if icon then
+		icon:Hide()
+		icon.Show = icon.Hide
+	end
+
+--~ 	local border = name and _G[name.."NormalTexture"]
+--~ 	if border then
+--~ 		border:Hide()
+--~ 		border.Show = border.Hide
+--~
 
 	return b
 end

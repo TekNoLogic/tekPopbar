@@ -26,10 +26,11 @@ end
 
 local anch1 = ChatFrame1
 
-local driver = CreateFrame("Frame", nil, UIParent, "SecureStateHeaderTemplate")
-RegisterStateDriver(driver, "state", "[bonusbar:1]1;[bonusbar:2]2;[bonusbar:3]3;[bonusbar:4]4;[bonusbar:5]5;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
-driver:SetAttribute("statemap-state", "$input")
-driver:SetAttribute("statebutton", "1:won;2:tew;3:twee;4:foah;5:fyve")
+local driver = CreateFrame("Frame", nil, UIParent)
+--~ local driver = CreateFrame("Frame", nil, UIParent, "SecureStateHeaderTemplate")
+--~ RegisterStateDriver(driver, "state", "[bonusbar:1]1;[bonusbar:2]2;[bonusbar:3]3;[bonusbar:4]4;[bonusbar:5]5;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
+--~ driver:SetAttribute("statemap-state", "$input")
+--~ driver:SetAttribute("statebutton", "1:won;2:tew;3:twee;4:foah;5:fyve")
 
 local possbar = {
 	132,      121,      124, -- nil            attack          action1
@@ -37,7 +38,7 @@ local possbar = {
 	123, 128, 129, 130,      -- stay   aggro   defen   passive
 }
 for actionID=1,12 do
-	local mainbtn = factory("tekPopbar"..actionID, driver, "ActionBarButtonTemplate,SecureAnchorEnterTemplate")
+	local mainbtn = factory("tekPopbar"..actionID, driver, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate") --,SecureAnchorEnterTemplate")
 	mainbtn:SetPoint("LEFT", anch1, "RIGHT", (actionID == 4 or actionID == 9) and gap * 2.5 or gap, 0)
 	driver:SetAttribute('addchild', mainbtn)
 	mainbtn:SetAttribute('useparent-statebutton', 'true')
@@ -53,8 +54,13 @@ for actionID=1,12 do
 
 	mainbtn:RegisterEvent("UPDATE_BINDINGS")
 
+	mainbtn:SetAttribute("_execute", [[buttons = newtable()]])
+	mainbtn:SetAttribute("_onenter", [[for _,button in pairs(buttons) do button:Show() end]])
+	mainbtn:SetAttribute("_onleave", [[for _,button in pairs(buttons) do button:Hide() end]])
 
-	local hdr = CreateFrame("Frame", "tekPopbarHdr"..actionID, mainbtn, "SecureStateHeaderTemplate")
+
+--~ 	local hdr = CreateFrame("Frame", "tekPopbarHdr"..actionID, mainbtn, "SecureStateHeaderTemplate")
+	local hdr = CreateFrame("Frame", "tekPopbarHdr"..actionID, mainbtn)
 	hdr:SetPoint("CENTER") hdr:SetWidth(2) hdr:SetHeight(2)
 	hdr:SetAttribute("statemap-anchor-enter", "1")
 	hdr:SetAttribute("statemap-anchor-leave", ";")
@@ -73,7 +79,14 @@ for actionID=1,12 do
 		hdr:SetAttribute("addchild", btn)
 		btn:SetPoint("BOTTOM", anch2, "TOP", 0, gap)
 		anch2 = btn
+
+		btn:Hide()
+
+		mainbtn:SetAttribute("_frame-kid", btn)
+		mainbtn:SetAttribute("_execute", "buttons["..bar.."] = self:GetAttribute('frameref-kid')")
 	end
+
+	mainbtn:SetUpdater()
 
 	anch1 = mainbtn
 end
@@ -104,7 +117,7 @@ PossessButton1:SetNormalTexture("")
 PossessButton2:SetNormalTexture("")
 PossessButton1:ClearAllPoints()
 PossessButton1:SetPoint("BOTTOMLEFT", tekPopbar1, "TOPRIGHT", gap, gap)
-PermaHide(PossessBarLeft)
-PermaHide(PossessBarRight)
+--~ PermaHide(PossessBarLeft)
+--~ PermaHide(PossessBarRight)
 
 
