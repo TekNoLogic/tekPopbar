@@ -58,7 +58,6 @@ local function ActionButton_Update(self)
 		end
 
 		ActionButton_UpdateState(self)
---~ 		ActionButton_UpdateUsable()
 		CooldownFrame_SetTimer(self.cooldown, GetActionCooldown(self.action))
 		ActionButton_UpdateFlash(self)
 	else
@@ -86,14 +85,11 @@ end
 
 
 local function OnUpdate(self, elapsed, ...)
+	self = self.owner
 	local id = SecureButton_GetModifiedAttribute(self, "action", SecureButton_GetEffectiveButton(self)) or 1
 	if self.action ~= id then
 		self.action = id
 		ActionButton_Update(self)
-	else
---~ 		self.icon:Hide()
---~ 		self.cooldown:Hide()
-		self:SetNormalTexture("Interface\\Buttons\\UI-Quickslot")
 	end
 
 	local oor, isUsable, notEnoughMana = IsActionInRange(id), IsUsableAction(id)
@@ -165,23 +161,18 @@ local function ActionButton_OnEvent(self, event, action)
 end
 
 
-local function SetUpdater(self)
---~ 	self:SetScript("OnAttributeChanged", ActionButton_Update)
-	self.SetUpdater = nil
-
-	ActionButton_Update(self)
-end
-
-
 function tekPopBar_MakeButton(name, parent, inherit)
 	inherit = inherit and "SecureActionButtonTemplate,"..inherit or "SecureActionButtonTemplate"
 	local b = CreateFrame("CheckButton", name, parent, inherit)
 	b:SetWidth(36) b:SetHeight(36)
 	b:Show()
 
+	local updater = CreateFrame("frame", nil, b)
+	updater.owner = b
+	updater:SetScript("OnUpdate", OnUpdate)
+
 	b:SetScript("PostClick", ActionButton_UpdateState)
 	b:SetScript("OnEvent", ActionButton_OnEvent)
-	b:SetScript("OnUpdate", OnUpdate)
 	b:SetScript("OnDragStart", OnDragStart)
 	b:SetScript("OnReceiveDrag", OnReceiveDrag)
 	b:HookScript("OnEnter", ActionButton_SetTooltip)
@@ -220,12 +211,7 @@ function tekPopBar_MakeButton(name, parent, inherit)
 	b.cooldown:SetWidth(36) b.cooldown:SetHeight(36)
 	b.cooldown:SetPoint("CENTER", 0, -1)
 
---~ 	b:SetNormalTexture(nil)
---~ 	b.SetNormalTexture = noop
 	b:SetNormalTexture("Interface\\Buttons\\UI-Quickslot2")
---~ 	local norm = b:GetNormalTexture()
---~ 	norm:SetWidth(66) norm:SetHeight(66)
---~ 	norm:SetPoint("CENTER", 0, -1)
 
 	b:SetPushedTexture("Interface\\Buttons\\UI-Quickslot-Depress")
 	b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square") --ADD
@@ -233,7 +219,6 @@ function tekPopBar_MakeButton(name, parent, inherit)
 
 	b.action = ActionButton_CalculateAction(b)
 	ActionButton_Update(b)
-	b.SetUpdater = SetUpdater
 
 	-- Cleanup
 	local icon = name and _G[name.."Icon"]

@@ -26,25 +26,27 @@ end
 
 local anch1 = ChatFrame1
 
---~ local driver = CreateFrame("Frame", nil, UIParent)
---~ local driver = CreateFrame("Frame", nil, UIParent, "SecureStateHeaderTemplate")
---~ RegisterStateDriver(driver, "state", "[bonusbar:1]1;[bonusbar:2]2;[bonusbar:3]3;[bonusbar:4]4;[bonusbar:5]5;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
---~ driver:SetAttribute("statemap-state", "$input")
---~ driver:SetAttribute("statebutton", "1:won;2:tew;3:twee;4:foah;5:fyve")
 
+--~ local possbar = {
+--~ 	132,      121,      124, -- nil            attack          action1
+--~ 	122, 131, 125, 126, 127, -- follow nil     action2 action3 action4
+--~ 	123, 128, 129, 130,      -- stay   aggro   defen   passive
+--~ }
 local possbar = {
-	132,      121,      124, -- nil            attack          action1
-	122, 131, 125, 126, 127, -- follow nil     action2 action3 action4
-	123, 128, 129, 130,      -- stay   aggro   defen   passive
+	132,      124,      127,
+	125, 126, 121, 122, 123,
+	131, 128, 129, 130,
 }
 for actionID=1,12 do
-	local mainbtn = factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate")
+	local mainbtn = factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
 	mainbtn:SetPoint("LEFT", anch1, "RIGHT", (actionID == 4 or actionID == 9) and gap * 2.5 or gap, 0)
---~ 	driver:SetAttribute('addchild', mainbtn)
---~ 	mainbtn:SetAttribute('useparent-statebutton', 'true')
---~ 	mainbtn:SetAttribute("*childraise-OnEnter", true)
---~ 	mainbtn:SetAttribute("*childstate-OnEnter", "enter")
---~ 	mainbtn:SetAttribute("*childstate-OnLeave", "leave")
+
+	RegisterStateDriver(mainbtn, "bonusbar", "[bonusbar:1]1;[bonusbar:2]2;[bonusbar:3]3;[bonusbar:4]4;[bonusbar:5]5;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
+	mainbtn:SetAttribute('_onstate-bonusbar', [[
+		newaction = (not newstate or newstate == "0") and ]].. actionID..[[ or newstate == "5" and ]].. possbar[actionID]..[[ or (]].. actionID..[[ + (newstate+5)*12)
+		self:SetAttribute("*action*", newaction)
+	]])
+
 --~ 	mainbtn:SetAttribute("*action-won", 6*12 + actionID)
 --~ 	mainbtn:SetAttribute("*action-tew", 7*12 + actionID)
 --~ 	mainbtn:SetAttribute("*action-twee", 8*12 + actionID)
@@ -73,16 +75,6 @@ for actionID=1,12 do
 	]])
 
 
---~ 	local hdr = CreateFrame("Frame", "tekPopbarHdr"..actionID, mainbtn, "SecureStateHeaderTemplate")
-	local hdr = CreateFrame("Frame", "tekPopbarHdr"..actionID, mainbtn)
-	hdr:SetPoint("CENTER") hdr:SetWidth(2) hdr:SetHeight(2)
-	hdr:SetAttribute("statemap-anchor-enter", "1")
-	hdr:SetAttribute("statemap-anchor-leave", ";")
-	hdr:SetAttribute("delaystatemap-anchor-leave", "1:0")
-	hdr:SetAttribute("delaytimemap-anchor-leave",  "1:1")
-	hdr:SetAttribute("delayhovermap-anchor-leave", "1:true")
-	mainbtn:SetAttribute("anchorchild", hdr)
-
 	local anch2 = mainbtn
 	for _,bar in ipairs(usebars) do
 		local btnID = actionID - 12 + bar*12
@@ -98,8 +90,6 @@ for actionID=1,12 do
 		mainbtn:SetAttribute("_frame-kid", btn)
 		mainbtn:SetAttribute("_execute", "buttons["..bar.."] = self:GetAttribute('frameref-kid')")
 	end
-
-	mainbtn:SetUpdater()
 
 	anch1 = mainbtn
 end
