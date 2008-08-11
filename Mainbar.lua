@@ -45,6 +45,9 @@ for actionID=1,12 do
 	mainbtn:SetAttribute('_onstate-bonusbar', [[
 		newaction = (not newstate or newstate == "0") and ]].. actionID..[[ or newstate == "5" and ]].. possbar[actionID]..[[ or (]].. actionID..[[ + (newstate+5)*12)
 		self:SetAttribute("*action*", newaction)
+
+		if self:IsUnderMouse(true) then return nil, nil, true
+		else for _,button in pairs(buttons) do button:Hide() end end
 	]])
 
 --~ 	mainbtn:SetAttribute("*action-won", 6*12 + actionID)
