@@ -14,12 +14,6 @@ local usebars = {2,5,6}
 local gap = 5
 
 
-local function PermaHide(frame)
-	frame:Hide()
-	frame.Show = frame.Hide
-end
-
-
 -----------------------------------
 --      Create mah buttons!      --
 -----------------------------------
@@ -50,11 +44,6 @@ for actionID=1,12 do
 		else for _,button in pairs(buttons) do button:Hide() end end
 	]])
 
---~ 	mainbtn:SetAttribute("*action-won", 6*12 + actionID)
---~ 	mainbtn:SetAttribute("*action-tew", 7*12 + actionID)
---~ 	mainbtn:SetAttribute("*action-twee", 8*12 + actionID)
---~ 	mainbtn:SetAttribute("*action-foah", 9*12 + actionID)
---~ 	mainbtn:SetAttribute("*action-fyve", possbar[actionID])
 	mainbtn:SetAttribute("*action*", actionID)
 	mainbtn.action = actionID
 
@@ -114,16 +103,14 @@ f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, -100) f:SetWidth(1) f:SetHei
 BonusActionBarFrame:SetParent(f)
 
 
---~ ---------------------------
---~ --      Possess Bar      --
---~ ---------------------------
+---------------------------
+--      Possess Bar      --
+---------------------------
 
 PossessBarFrame:SetParent(UIParent)
 PossessButton1:SetNormalTexture("")
 PossessButton2:SetNormalTexture("")
 PossessButton1:ClearAllPoints()
 PossessButton1:SetPoint("BOTTOMLEFT", tekPopbar1, "TOPRIGHT", gap, gap)
---~ PermaHide(PossessBarLeft)
---~ PermaHide(PossessBarRight)
 
 
