@@ -1,4 +1,28 @@
 
+local gap, lastf = 5
+for i=1,10 do
+	local f = _G["PetActionButton"..i]
+	f:SetParent(UIParent)
+	f:ClearAllPoints()
+	if lastf then f:SetPoint("LEFT", lastf, "RIGHT", gap, 0) end
+	lastf = f
+end
+
+PetActionButton1:SetPoint("BOTTOMLEFT", tekPopbar12, "BOTTOMRIGHT", gap*2, 0)
+--~ PetActionButton2:SetPoint("LEFT", PetActionButton1, "RIGHT", gap, 0)
+--~ PetActionButton3:SetPoint("LEFT", PetActionButton2, "RIGHT", gap, 0)
+
+--~ PetActionButton4:SetPoint("BOTTOM", PetActionButton9, "TOP", 0, gap)
+--~ PetActionButton5:SetPoint("LEFT", PetActionButton4, "RIGHT", gap, 0)
+--~ PetActionButton6:SetPoint("LEFT", PetActionButton5, "RIGHT", gap, 0)
+--~ PetActionButton7:SetPoint("LEFT", PetActionButton6, "RIGHT", gap, 0)
+
+--~ PetActionButton8:SetPoint("BOTTOM", PetActionButton1, "TOP", 0, gap)
+--~ PetActionButton9:SetPoint("BOTTOM", PetActionButton2, "TOP", 0, gap)
+--~ PetActionButton10:SetPoint("BOTTOM", PetActionButton3, "TOP", 0, gap)
+
+if true then return end
+
 local gap = 5
 local _, myclass = UnitClass("player")
 
