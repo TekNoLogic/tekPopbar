@@ -24,21 +24,24 @@ for actionID=36,25,-1 do
 	mainbtn:SetAttribute("*type*", "action")
 	mainbtn:SetAttribute("*action*", actionID)
 
-	mainbtn:SetAttribute("_execute", [[buttons = newtable()]])
-	mainbtn:SetAttribute("_onenter", [[for _,button in pairs(buttons) do button:Show() end]])
+	mainbtn:SetAttribute("_onenter", [[
+		control:ChildUpdate("doshow")
+		control:SetAnimating(false)
+	]])
 	mainbtn:SetAttribute("_onleave", [[
 		elap = 0
-		return nil, nil, true
+		control:SetAnimating(true)
 	]])
 	mainbtn:SetAttribute("_onupdate", [[
-		if self:IsUnderMouse(true) then return nil, nil, true end
-
-		elap = elap + elapsed
-		if elap >= 2 then
-			for _,button in pairs(buttons) do button:Hide() end
-			return
+		if self:IsUnderMouse(true) then
+			elap = 0
+		else
+			elap = elap + elapsed
+			if elap >= 2 then
+				control:ChildUpdate("dohide")
+				control:SetAnimating(false)
+			end
 		end
-		return nil, nil, true
 	]])
 
 	local anch2 = mainbtn
@@ -52,8 +55,8 @@ for actionID=36,25,-1 do
 		btn:Hide()
 
 		mainbtn:SetAttribute("_adopt", btn)
-		mainbtn:SetAttribute("_frame-kid", btn)
-		mainbtn:SetAttribute("_execute", "buttons["..bar.."] = self:GetAttribute('frameref-kid')")
+		btn:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
+		btn:SetAttribute("_childupdate-dohide", [[ self:Hide() ]])
 
 		anch2 = btn
 	end

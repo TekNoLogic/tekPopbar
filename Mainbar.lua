@@ -40,8 +40,7 @@ for actionID=1,12 do
 		newaction = (not newstate or newstate == "0") and ]].. actionID..[[ or newstate == "5" and ]].. possbar[actionID]..[[ or (]].. actionID..[[ + (newstate+5)*12)
 		self:SetAttribute("*action*", newaction)
 
-		if self:IsUnderMouse(true) then return nil, nil, true
-		else for _,button in pairs(buttons) do button:Hide() end end
+		if not self:IsUnderMouse(true) then control:ChildUpdate("dohide") end
 	]])
 
 	mainbtn:SetAttribute("*action*", actionID)
@@ -49,23 +48,25 @@ for actionID=1,12 do
 
 	mainbtn:RegisterEvent("UPDATE_BINDINGS")
 
-	mainbtn:SetAttribute("_execute", [[buttons = newtable()]])
-	mainbtn:SetAttribute("_onenter", [[for _,button in pairs(buttons) do button:Show() end]])
+	mainbtn:SetAttribute("_onenter", [[
+		control:ChildUpdate("doshow")
+		control:SetAnimating(false)
+	]])
 	mainbtn:SetAttribute("_onleave", [[
 		elap = 0
-		return nil, nil, true
+		control:SetAnimating(true)
 	]])
 	mainbtn:SetAttribute("_onupdate", [[
-		if self:IsUnderMouse(true) then return nil, nil, true end
-
-		elap = elap + elapsed
-		if elap >= 2 then
-			for _,button in pairs(buttons) do button:Hide() end
-			return
+		if self:IsUnderMouse(true) then
+			elap = 0
+		else
+			elap = elap + elapsed
+			if elap >= 2 then
+				control:ChildUpdate("dohide")
+				control:SetAnimating(false)
+			end
 		end
-		return nil, nil, true
 	]])
-
 
 	local anch2 = mainbtn
 	for _,bar in ipairs(usebars) do
@@ -79,8 +80,8 @@ for actionID=1,12 do
 		btn:Hide()
 
 		mainbtn:SetAttribute("_adopt", btn)
-		mainbtn:SetAttribute("_frame-kid", btn)
-		mainbtn:SetAttribute("_execute", "buttons["..bar.."] = self:GetAttribute('frameref-kid')")
+		btn:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
+		btn:SetAttribute("_childupdate-dohide", [[ self:Hide() ]])
 	end
 
 	anch1 = mainbtn
