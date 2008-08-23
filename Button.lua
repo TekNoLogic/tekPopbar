@@ -86,9 +86,11 @@ end
 
 local function OnUpdate(self, elapsed, ...)
 	self = self.owner
-	local id = SecureButton_GetModifiedAttribute(self, "action", SecureButton_GetEffectiveButton(self)) or 1
-	if self.action ~= id then
-		self.action = id
+	local id = SecureButton_GetModifiedAttribute(self, "*action*", SecureButton_GetEffectiveButton(self))
+	if not id then return end
+
+	if self.cachedaction ~= id then
+		self.action, self.cachedaction = id, id
 		ActionButton_Update(self)
 	end
 
@@ -116,7 +118,9 @@ local function OnReceiveDrag(self)
 end
 
 local function SetTooltip(frame)
-	local id = SecureButton_GetModifiedAttribute(self, "action", SecureButton_GetEffectiveButton(self)) or 1
+	local id = SecureButton_GetModifiedAttribute(self, "action", SecureButton_GetEffectiveButton(self))
+	if not id then return end
+
 	GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
 	GameTooltip:SetAction(id)
 end

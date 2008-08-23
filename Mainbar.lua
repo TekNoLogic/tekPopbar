@@ -37,12 +37,17 @@ for actionID=1,12 do
 
 	RegisterStateDriver(mainbtn, "bonusbar", "[bonusbar:1]1;[bonusbar:2]2;[bonusbar:3]3;[bonusbar:4]4;[bonusbar:5]5;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
 	mainbtn:SetAttribute('_onstate-bonusbar', [[
-		newaction = (not newstate or newstate == "0") and ]].. actionID..[[ or newstate == "5" and ]].. possbar[actionID]..[[ or (]].. actionID..[[ + (newstate+5)*12)
-		self:SetAttribute("*action*", newaction)
+		scrolloffset = 0
+		baseaction = (not newstate or newstate == "0") and ]].. actionID..[[ or newstate == "5" and ]].. possbar[actionID]..[[ or (]].. actionID..[[ + (newstate+5)*12)
+		self:SetAttribute("*action*", baseaction)
 
+		control:ChildUpdate("offset")
 		if not self:IsUnderMouse(true) then control:ChildUpdate("dohide") end
 	]])
 
+	mainbtn:Execute([[
+		scrolloffset = 0
+		baseaction = ]].. actionID)
 	mainbtn:SetAttribute("*action*", actionID)
 	mainbtn.action = actionID
 
@@ -68,21 +73,40 @@ for actionID=1,12 do
 		end
 	]])
 
+	local actions = {}
 	local anch2 = mainbtn
-	for _,bar in ipairs(usebars) do
+	for i,bar in ipairs(usebars) do
 		local btnID = actionID - 12 + bar*12
+		table.insert(actions, btnID)
 		local btn = factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate")
 		btn:SetAttribute("type", "action")
 		btn:SetAttribute("*action*", btnID)
+		btn.action = btnID
 		btn:SetPoint("BOTTOM", anch2, "TOP", 0, gap)
 		anch2 = btn
 
 		btn:Hide()
 
 		mainbtn:SetAttribute("_adopt", btn)
+		btn:SetAttribute("myoffset", i)
 		btn:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
 		btn:SetAttribute("_childupdate-dohide", [[ self:Hide() ]])
+		btn:SetAttribute("_childupdate-offset", [[
+			local myoffset = (self:GetAttribute("myoffset") + scrolloffset) % (table.maxn(scrollactions) + 1)
+			self:SetAttribute("*action*", myoffset == 0 and baseaction or scrollactions[myoffset])
+		]])
 	end
+
+	mainbtn:EnableMouseWheel(true)
+	mainbtn:Execute([[ scrollactions = newtable( ]].. table.concat(actions, ",").. [[ ) ]])
+	mainbtn:WrapScript(mainbtn, "OnMouseWheel", [[
+		scrolloffset = scrolloffset - offset
+		if scrolloffset < 0 then scrolloffset = table.maxn(scrollactions) end
+		if scrolloffset > table.maxn(scrollactions) then scrolloffset = 0 end
+
+		self:SetAttribute("*action*", scrolloffset == 0 and baseaction or scrollactions[scrolloffset])
+		control:ChildUpdate("offset")
+	]])
 
 	anch1 = mainbtn
 end
