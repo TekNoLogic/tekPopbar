@@ -117,6 +117,10 @@ tekPopbar1:SetPoint("BOTTOMLEFT", ChatFrame1, "TOPLEFT", 0, 10)
 
 
 MainMenuBar:Hide()
+MainMenuBar.Show = MainMenuBar.Hide
+
+VehicleMenuBar:Hide()
+VehicleMenuBar.Show = VehicleMenuBar.Hide
 
 
 --------------------------------
@@ -138,4 +142,8 @@ PossessButton2:SetNormalTexture("")
 PossessButton1:ClearAllPoints()
 PossessButton1:SetPoint("BOTTOMLEFT", tekPopbar1, "TOPRIGHT", gap, gap)
 
+PossessBackground1:Hide()
+PossessBackground2:Hide()
+PossessBackground1.Show = PossessBackground1.Hide
+PossessBackground2.Show = PossessBackground2.Hide
 
