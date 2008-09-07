@@ -21,7 +21,7 @@ end
 
 
 local function ActionButton_UpdateState(self)
-	self:SetChecked((IsCurrentAction(self.action) or IsAutoRepeatAction(self.action)) and 1 or 0)
+	self:SetChecked(IsCurrentAction(self.action) or IsAutoRepeatAction(self.action))
 end
 
 
@@ -61,6 +61,7 @@ local function ActionButton_Update(self)
 		CooldownFrame_SetTimer(self.cooldown, GetActionCooldown(self.action))
 		ActionButton_UpdateFlash(self)
 	else
+		self:SetChecked(false)
 		if self.eventsRegistered then
 			for _,event in pairs(events) do self:UnregisterEvent(event) end
 			self.eventsRegistered = nil
