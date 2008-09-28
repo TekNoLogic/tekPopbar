@@ -119,8 +119,34 @@ tekPopbar1:SetPoint("BOTTOMLEFT", ChatFrame1, "TOPLEFT", 0, 10)
 MainMenuBar:Hide()
 MainMenuBar.Show = MainMenuBar.Hide
 
+
+----------------------------
+--      Vehicle crap      --
+----------------------------
+
 VehicleMenuBar:Hide()
 VehicleMenuBar.Show = VehicleMenuBar.Hide
+
+local f = CreateFrame("Button", nil, tekPopbar1)
+f:SetWidth(48) f:SetHeight(48)
+f:SetPoint("BOTTOMLEFT", tekPopbar6, "TOPRIGHT", gap, gap)
+f:SetPushedTexture("Interface\\Buttons\\UI-Quickslot-Depress")
+f:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
+if not CanExitVehicle() then f:Hide() end
+
+f:SetScript("OnClick", VehicleExit)
+f:SetScript("OnEvent", function(self, event, unit)
+	if unit ~= "player" then return end
+	if CanExitVehicle() then self:Show() else self:Hide() end
+end)
+f:RegisterEvent("UNIT_ENTERED_VEHICLE")
+f:RegisterEvent("UNIT_ENTERING_VEHICLE")
+f:RegisterEvent("UNIT_EXITED_VEHICLE")
+
+
+local icon = f:CreateTexture(nil, "BACKGROUND")
+icon:SetAllPoints()
+icon:SetTexture("Interface\\Icons\\Spell_Shadow_SacrificialShield")
 
 
 --------------------------------
