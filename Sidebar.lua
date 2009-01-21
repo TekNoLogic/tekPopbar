@@ -19,35 +19,19 @@ local gap = -6
 
 local anch1 = MultiBarRightButton1
 for actionID=36,25,-1 do
-	local mainbtn = factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate")
+	local mainbtn = factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
 	mainbtn:SetPoint("BOTTOM", anch1, "TOP", 0, -gap)
 	mainbtn:SetAttribute("*type*", "action")
 	mainbtn:SetAttribute("*action*", actionID)
 
-	mainbtn:SetAttribute("_onenter", [[
-		control:ChildUpdate("doshow")
-		control:SetAnimating(false)
-	]])
-	mainbtn:SetAttribute("_onleave", [[
-		elap = 0
-		control:SetAnimating(true)
-	]])
-	mainbtn:SetAttribute("_onupdate", [[
-		if self:IsUnderMouse(true) then
-			elap = 0
-		else
-			elap = elap + elapsed
-			if elap >= 2 then
-				control:ChildUpdate("dohide")
-				control:SetAnimating(false)
-			end
-		end
-	]])
+	mainbtn:SetAttribute('_onstate-popped', [[ control:ChildUpdate(self:IsUnderMouse(true) and "doshow" or "dohide") ]])
+	mainbtn:SetAttribute("_onenter", [[ self:SetAttribute("state-popped", "inself") ]])
+	mainbtn:SetAttribute("_onleave", [[ self:SetAttribute("state-popped", "self") ]])
 
 	local anch2 = mainbtn
 	for _,bar in ipairs(usebars) do
 		local btnID = actionID - 36 + bar*12
-		local btn = factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate")
+		local btn = factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate")
 		btn:SetAttribute("*type*", "action")
 		btn:SetAttribute("*action*", btnID)
 		btn:SetPoint("RIGHT", anch2, "LEFT", gap, 0)
@@ -55,11 +39,24 @@ for actionID=36,25,-1 do
 		btn:Hide()
 
 		mainbtn:SetAttribute("_adopt", btn)
+		btn:SetFrameRef("mainbtn", mainbtn)
 		btn:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
 		btn:SetAttribute("_childupdate-dohide", [[ self:Hide() ]])
+		btn:SetAttribute("_onleave", [[ self:GetFrameRef("mainbtn"):SetAttribute("state-popped", ]]..bar..[[) ]])
 
 		anch2 = btn
 	end
+
+	local back = CreateFrame("Button", nil, mainbtn, "SecureHandlerEnterLeaveTemplate")
+	back:SetPoint("TOPLEFT", anch2, "TOPRIGHT")
+	back:SetPoint("BOTTOMRIGHT", mainbtn, "BOTTOMLEFT")
+	back:Hide()
+
+	mainbtn:SetAttribute("_adopt", back)
+	back:SetFrameRef("mainbtn", mainbtn)
+	back:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
+	back:SetAttribute("_childupdate-dohide", [[ self:Hide() ]])
+	back:SetAttribute("_onleave", [[ self:GetFrameRef("mainbtn"):SetAttribute("state-popped", "back") ]])
 
 	anch1 = mainbtn
 end

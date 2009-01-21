@@ -54,32 +54,16 @@ for actionID=1,12 do
 
 	mainbtn:RegisterEvent("UPDATE_BINDINGS")
 
-	mainbtn:SetAttribute("_onenter", [[
-		control:ChildUpdate("doshow")
-		control:SetAnimating(false)
-	]])
-	mainbtn:SetAttribute("_onleave", [[
-		elap = 0
-		control:SetAnimating(true)
-	]])
-	mainbtn:SetAttribute("_onupdate", [[
-		if self:IsUnderMouse(true) then
-			elap = 0
-		else
-			elap = elap + elapsed
-			if elap >= 2 then
-				control:ChildUpdate("dohide")
-				control:SetAnimating(false)
-			end
-		end
-	]])
+	mainbtn:SetAttribute('_onstate-popped', [[ control:ChildUpdate(self:IsUnderMouse(true) and "doshow" or "dohide") ]])
+	mainbtn:SetAttribute("_onenter", [[ self:SetAttribute("state-popped", "inself") ]])
+	mainbtn:SetAttribute("_onleave", [[ self:SetAttribute("state-popped", "self") ]])
 
 	local actions = {}
 	local anch2 = mainbtn
 	for i,bar in ipairs(usebars) do
 		local btnID = actionID - 12 + bar*12
 		table.insert(actions, btnID)
-		local btn = factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate")
+		local btn = factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate")
 		btn:SetAttribute("type", "action")
 		btn:SetAttribute("*action*", btnID)
 		btn.action = btnID
@@ -90,13 +74,26 @@ for actionID=1,12 do
 
 		mainbtn:SetAttribute("_adopt", btn)
 		btn:SetAttribute("myoffset", i)
+		btn:SetFrameRef("mainbtn", mainbtn)
 		btn:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
 		btn:SetAttribute("_childupdate-dohide", [[ self:Hide() ]])
 		btn:SetAttribute("_childupdate-offset", [[
 			local myoffset = (self:GetAttribute("myoffset") + scrolloffset) % (table.maxn(scrollactions) + 1)
 			self:SetAttribute("*action*", myoffset == 0 and baseaction or scrollactions[myoffset])
 		]])
+		btn:SetAttribute("_onleave", [[ self:GetFrameRef("mainbtn"):SetAttribute("state-popped", ]]..i..[[) ]])
 	end
+
+	local back = CreateFrame("Button", nil, mainbtn, "SecureHandlerEnterLeaveTemplate")
+	back:SetPoint("TOPLEFT", anch2, "BOTTOMLEFT")
+	back:SetPoint("BOTTOMRIGHT", mainbtn, "TOPRIGHT")
+	back:Hide()
+
+	mainbtn:SetAttribute("_adopt", back)
+	back:SetFrameRef("mainbtn", mainbtn)
+	back:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
+	back:SetAttribute("_childupdate-dohide", [[ self:Hide() ]])
+	back:SetAttribute("_onleave", [[ self:GetFrameRef("mainbtn"):SetAttribute("state-popped", "back") ]])
 
 	mainbtn:EnableMouseWheel(true)
 	mainbtn:Execute([[ scrollactions = newtable( ]].. table.concat(actions, ",").. [[ ) ]])
