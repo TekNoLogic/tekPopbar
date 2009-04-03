@@ -81,7 +81,7 @@ for actionID=1,12 do
 		]])
 	end
 
-	local onshow, onhide = "self:RegisterAutoHide(3) self:AddToAutoHide(self:GetFrameRef('mainbtn'))", ""
+	local onshow, onhide = "self:RegisterAutoHide(2) self:AddToAutoHide(self:GetFrameRef('mainbtn'))", ""
 	for i=2,#butts do
 		butts[1]:SetFrameRef("btn"..i, butts[i])
 		onshow = onshow.."\n self:GetFrameRef('btn"..i.."'):Show() \n self:AddToAutoHide(self:GetFrameRef('btn"..i.."'))"
@@ -89,7 +89,6 @@ for actionID=1,12 do
 	end
 	butts[1]:SetAttribute("_onshow", onshow)
 	butts[1]:SetAttribute("_onhide", onhide)
-	butts[1]:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
 
 	mainbtn:SetFrameRef("popout", butts[1])
 	mainbtn:SetAttribute('_onenter', [[ self:GetFrameRef('popout'):Show() ]])
