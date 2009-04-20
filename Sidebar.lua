@@ -24,14 +24,11 @@ for actionID=36,25,-1 do
 	mainbtn:SetAttribute("*type*", "action")
 	mainbtn:SetAttribute("*action*", actionID)
 
-	mainbtn:SetAttribute('_onstate-popped', [[ control:ChildUpdate(self:IsUnderMouse(true) and "doshow" or "dohide") ]])
-	mainbtn:SetAttribute("_onenter", [[ self:SetAttribute("state-popped", "inself") ]])
-	mainbtn:SetAttribute("_onleave", [[ self:SetAttribute("state-popped", "self") ]])
-
 	local anch2 = mainbtn
+	local butts = {}
 	for _,bar in ipairs(usebars) do
 		local btnID = actionID - 36 + bar*12
-		local btn = factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate")
+		local btn = factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerShowHideTemplate")
 		btn:SetAttribute("*type*", "action")
 		btn:SetAttribute("*action*", btnID)
 		btn:SetPoint("RIGHT", anch2, "LEFT", gap, 0)
@@ -40,23 +37,22 @@ for actionID=36,25,-1 do
 
 		mainbtn:SetAttribute("_adopt", btn)
 		btn:SetFrameRef("mainbtn", mainbtn)
-		btn:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
-		btn:SetAttribute("_childupdate-dohide", [[ self:Hide() ]])
-		btn:SetAttribute("_onleave", [[ self:GetFrameRef("mainbtn"):SetAttribute("state-popped", ]]..bar..[[) ]])
 
+		table.insert(butts, btn)
 		anch2 = btn
 	end
 
-	local back = CreateFrame("Button", nil, mainbtn, "SecureHandlerEnterLeaveTemplate")
-	back:SetPoint("TOPLEFT", anch2, "TOPRIGHT")
-	back:SetPoint("BOTTOMRIGHT", mainbtn, "BOTTOMLEFT")
-	back:Hide()
+	local onshow, onhide = "self:RegisterAutoHide(1) self:AddToAutoHide(self:GetFrameRef('mainbtn'))", ""
+	for i=2,#butts do
+		butts[1]:SetFrameRef("btn"..i, butts[i])
+		onshow = onshow.."\n self:GetFrameRef('btn"..i.."'):Show() \n self:AddToAutoHide(self:GetFrameRef('btn"..i.."'))"
+		onhide = onhide.."\n self:GetFrameRef('btn"..i.."'):Hide()"
+	end
+	butts[1]:SetAttribute("_onshow", onshow)
+	butts[1]:SetAttribute("_onhide", onhide)
 
-	mainbtn:SetAttribute("_adopt", back)
-	back:SetFrameRef("mainbtn", mainbtn)
-	back:SetAttribute("_childupdate-doshow", [[ self:Show() ]])
-	back:SetAttribute("_childupdate-dohide", [[ self:Hide() ]])
-	back:SetAttribute("_onleave", [[ self:GetFrameRef("mainbtn"):SetAttribute("state-popped", "back") ]])
+	mainbtn:SetFrameRef("popout", butts[1])
+	mainbtn:SetAttribute('_onenter', [[ self:GetFrameRef('popout'):Show() ]])
 
 	anch1 = mainbtn
 end
