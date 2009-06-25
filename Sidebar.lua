@@ -60,17 +60,3 @@ end
 
 tekPopbar36:ClearAllPoints()
 tekPopbar36:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, -gap)
-
-if select(4, GetBuildInfo()) ~= 30100 then
-	local function movetracker()
-		QuestWatchFrame:ClearAllPoints()
-		QuestWatchFrame:SetPoint("TOP", MinimapCluster, "BOTTOM", 0, 0)
-		QuestWatchFrame:SetPoint("RIGHT", tekPopbar25, "LEFT", -6, 0)
-
-		AchievementWatchFrame:ClearAllPoints()
-		AchievementWatchFrame:SetPoint("TOPRIGHT", tekPopbar30, "TOPLEFT", -6, 0)
-	end
-
-	hooksecurefunc("UIParent_ManageFramePositions", movetracker)
-	movetracker()
-end
