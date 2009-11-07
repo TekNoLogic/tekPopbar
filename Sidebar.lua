@@ -60,3 +60,7 @@ end
 
 tekPopbar36:ClearAllPoints()
 tekPopbar36:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, -gap)
+
+
+WatchFrame:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMRIGHT", -36, 20)
+function WatchFrame.SetPoint() end
