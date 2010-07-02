@@ -144,7 +144,7 @@ local function ActionButton_OnEvent(self, event, action)
 	if event == "UPDATE_BINDINGS" then
 		self:UnregisterEvent("UPDATE_BINDINGS")
 		local id = self.action
-		if id <= 12 then SetOverrideBindingClick(UIParent, nil, select(2, GetBinding(29 + id)), "tekPopbar"..id) end
+		if id <= 12 then SetOverrideBindingClick(UIParent, nil, select(2, GetBinding(28 + id)), "tekPopbar"..id) end
 		return
 	end
 
