@@ -62,5 +62,9 @@ tekPopbar36:ClearAllPoints()
 tekPopbar36:SetPoint("BOTTOMRIGHT", WorldFrame, "BOTTOMRIGHT", 0, -gap)
 
 
-WatchFrame:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMRIGHT", -36, 20)
-function WatchFrame.SetPoint() end
+local o = WatchFrame.SetPoint
+function WatchFrame:SetPoint(a1, frame, a2, x, y)
+	print("WatchFrame:SetPoint", a1, frame, a2, x, y)
+	if frame == "MinimapCluster" then o(self, a1, frame, a2, x-36, y)
+	elseif frame == "UIParent" then o(self, "BOTTOM", frame, "BOTTOM", 0, y) end
+end
