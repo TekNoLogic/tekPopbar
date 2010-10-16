@@ -1,6 +1,6 @@
 
 -- Bars:
--- cat = 7, moon/tree = 8, bear = 9
+-- cat = 7, tree = 8, bear = 9, moon = 10
 -- battle = 7, def = 8, berz = 9
 -- stealth = 7
 -- shadow = 6

@@ -8,10 +8,9 @@ tekPopBar_MakeButton = nil
 
 local _, class = UnitClass("player")
 
-local usebars = {4, 10}
+local usebars = {4}
 if class ~= "DRUID" and class ~= "PRIEST" then table.insert(usebars, 7) end
-if class ~= "DRUID" then table.insert(usebars, 8) end
-if class ~= "DRUID" then table.insert(usebars, 9) end
+if class ~= "DRUID" then table.insert(usebars, 8); table.insert(usebars, 9); table.insert(usebars, 10) end
 
 
 local gap = -6
