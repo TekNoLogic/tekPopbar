@@ -163,6 +163,14 @@ local function ActionButton_OnEvent(self, event, action)
 		self.flash:Hide()
 		return ActionButton_UpdateState(self)
 	end
+
+	if event == "SPELL_ACTIVATION_OVERLAY_GLOW_SHOW" then
+		local actionType, id, subType = GetActionInfo(self.action)
+		if actionType == "spell" and id == action then ActionButton_ShowOverlayGlow(self) end
+	elseif event == "SPELL_ACTIVATION_OVERLAY_GLOW_HIDE" then
+		local actionType, id, subType = GetActionInfo(self.action)
+		if actionType == "spell" and id == action then ActionButton_HideOverlayGlow(self) end
+	end
 end
 
 
@@ -185,6 +193,8 @@ function tekPopBar_MakeButton(name, parent, inherit)
 
 	b:RegisterEvent("PLAYER_ENTERING_WORLD")
 	b:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+	b:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+	b:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
 	b:RegisterForDrag("LeftButton", "RightButton")
 	b:RegisterForClicks("AnyUp")
 
