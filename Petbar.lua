@@ -21,6 +21,13 @@ PetActionButton1:SetPoint("BOTTOMLEFT", tekPopbar12, "BOTTOMRIGHT", gap*2, 0)
 --~ PetActionButton9:SetPoint("BOTTOM", PetActionButton2, "TOP", 0, gap)
 --~ PetActionButton10:SetPoint("BOTTOM", PetActionButton3, "TOP", 0, gap)
 
+-- UIPARENT_MANAGED_FRAME_POSITIONS["MultiCastActionBarFrame"] = nil
+MultiCastActionBarFrame:SetParent(tekPopbar12)
+-- MultiCastActionBarFrame.SetParent = MultiCastActionBarFrame.Show
+MultiCastActionBarFrame:ClearAllPoints()
+MultiCastActionBarFrame:SetPoint("BOTTOMLEFT", tekPopbar12, "BOTTOMRIGHT", gap*2, 0)
+MultiCastActionBarFrame.SetPoint = MultiCastActionBarFrame.Show
+
 if true then return end
 
 local gap = 5
