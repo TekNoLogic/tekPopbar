@@ -1,9 +1,9 @@
 
+local myname, ns = ...
+
+
 local _, _, _, enabled = GetAddOnInfo("tekPopBar")
 if not enabled then return end
-
-local factory = tekPopBar_MakeButton
-tekPopBar_MakeButton = nil
 
 
 local _, class = UnitClass("player")
@@ -18,7 +18,7 @@ local gap = -6
 
 local anch1 = MultiBarRightButton1
 for actionID=36,25,-1 do
-	local mainbtn = factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
+	local mainbtn = ns.factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
 	mainbtn:SetPoint("BOTTOM", anch1, "TOP", 0, -gap)
 	mainbtn:SetAttribute("*type*", "action")
 	mainbtn:SetAttribute("*action*", actionID)
@@ -27,7 +27,7 @@ for actionID=36,25,-1 do
 	local butts = {}
 	for _,bar in ipairs(usebars) do
 		local btnID = actionID - 36 + bar*12
-		local btn = factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerShowHideTemplate")
+		local btn = ns.factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerShowHideTemplate")
 		btn:SetAttribute("*type*", "action")
 		btn:SetAttribute("*action*", btnID)
 		btn:SetPoint("RIGHT", anch2, "LEFT", gap, 0)

@@ -1,4 +1,6 @@
 
+local myname, ns = ...
+
 
 local _G = _G
 local function noop() end
@@ -174,7 +176,7 @@ local function ActionButton_OnEvent(self, event, action)
 end
 
 
-function tekPopBar_MakeButton(name, parent, inherit)
+function ns.factory(name, parent, inherit)
 	inherit = inherit and "SecureActionButtonTemplate,"..inherit or "SecureActionButtonTemplate"
 	local b = CreateFrame("CheckButton", name, parent, inherit)
 	b:SetWidth(36) b:SetHeight(36)
@@ -244,5 +246,3 @@ function tekPopBar_MakeButton(name, parent, inherit)
 
 	return b
 end
-
-

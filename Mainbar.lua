@@ -5,7 +5,7 @@
 -- stealth = 7
 -- shadow = 6
 
-local factory = tekPopBar_MakeButton
+local myname, ns = ...
 
 
 local _G = _G
@@ -32,7 +32,7 @@ local possbar = {
 	131, 128, 129, 130,
 }
 for actionID=1,12 do
-	local mainbtn = factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
+	local mainbtn = ns.factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
 	mainbtn:SetPoint("LEFT", anch1, "RIGHT", (actionID == 4 or actionID == 9) and gap * 2.5 or gap, 0)
 
 	RegisterStateDriver(mainbtn, "bonusbar", "[bonusbar:1]1;[bonusbar:2]2;[bonusbar:3]3;[bonusbar:4]4;[bonusbar:5]5;[overridebar]8;[vehicleui]9;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
@@ -62,7 +62,7 @@ for actionID=1,12 do
 	for i,bar in ipairs(usebars) do
 		local btnID = actionID - 12 + bar*12
 		table.insert(actions, btnID)
-		local btn = factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerShowHideTemplate")
+		local btn = ns.factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerShowHideTemplate")
 		btn:SetAttribute("type", "action")
 		btn:SetAttribute("*action*", btnID)
 		btn.action = btnID
