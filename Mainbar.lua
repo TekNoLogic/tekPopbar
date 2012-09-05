@@ -21,24 +21,26 @@ local gap = 5
 local anch1 = ChatFrame1
 
 
---~ local possbar = {
---~ 	132,      121,      124, -- nil            attack          action1
---~ 	122, 131, 125, 126, 127, -- follow nil     action2 action3 action4
---~ 	123, 128, 129, 130,      -- stay   aggro   defen   passive
---~ }
-local possbar = {
-	132,      124,      127,
-	125, 126, 121, 122, 123,
-	131, 128, 129, 130,
+local overridebarlayout = {
+	12,    4,     7,
+	 5, 6, 1,  2, 3,
+	11, 8, 9, 10,
 }
 for actionID=1,12 do
 	local mainbtn = ns.factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
 	mainbtn:SetPoint("LEFT", anch1, "RIGHT", (actionID == 4 or actionID == 9) and gap * 2.5 or gap, 0)
 
-	RegisterStateDriver(mainbtn, "bonusbar", "[bonusbar:1]1;[bonusbar:2]2;[bonusbar:3]3;[bonusbar:4]4;[bonusbar:5]5;[overridebar]8;[vehicleui]9;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
+	RegisterStateDriver(mainbtn, "bonusbar", "[bonusbar:1]6;[bonusbar:2]7;[bonusbar:3]8;[bonusbar:4]9;[bonusbar:5]10;[vehicleui]11;[overridebar]13;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
 	mainbtn:SetAttribute('_onstate-bonusbar', [[
 		scrolloffset = 0
-		baseaction = (not newstate or newstate == 0) and ]].. actionID..[[ or newstate == 5 and ]].. possbar[actionID]..[[ or (]].. actionID..[[ + (newstate+5)*12)
+		newstate = newstate or 0
+		baseaction = ]].. actionID..[[
+		if newstate >= 10 then
+		  baseaction = ]].. overridebarlayout[actionID]..[[ + newstate*12
+		elseif newstate >= 6 then
+		  baseaction = ]].. actionID..[[ + newstate*12
+		end
+		self:SetAttribute("*type*", 'action')
 		self:SetAttribute("*action*", baseaction)
 
 		control:ChildUpdate("offset")
@@ -120,8 +122,8 @@ MainMenuBar.Show = MainMenuBar.Hide
 --      Vehicle crap      --
 ----------------------------
 
-VehicleMenuBar:Hide()
-VehicleMenuBar.Show = VehicleMenuBar.Hide
+-- VehicleMenuBar:Hide()
+-- VehicleMenuBar.Show = VehicleMenuBar.Hide
 
 local f = CreateFrame("Button", nil, tekPopbar1)
 f:SetWidth(48) f:SetHeight(48)
