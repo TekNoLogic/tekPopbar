@@ -98,7 +98,7 @@ for actionID=1,12 do
 	mainbtn:EnableMouseWheel(true)
 	mainbtn:Execute([[ scrollactions = newtable( ]].. table.concat(actions, ",").. [[ ) ]])
 	mainbtn:WrapScript(mainbtn, "OnMouseWheel", [[
-		scrolloffset = scrolloffset - offset
+		scrolloffset = scrolloffset + offset
 		if scrolloffset < 0 then scrolloffset = table.maxn(scrollactions) end
 		if scrolloffset > table.maxn(scrollactions) then scrolloffset = 0 end
 
