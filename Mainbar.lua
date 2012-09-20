@@ -30,7 +30,7 @@ for actionID=1,12 do
 	local mainbtn = ns.factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
 	mainbtn:SetPoint("LEFT", anch1, "RIGHT", (actionID == 4 or actionID == 9) and gap * 2.5 or gap, 0)
 
-	RegisterStateDriver(mainbtn, "bonusbar", "[bonusbar:1]6;[bonusbar:2]7;[bonusbar:3]8;[bonusbar:4]9;[bonusbar:5]10;[vehicleui]11;[overridebar]13;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
+	RegisterStateDriver(mainbtn, "bonusbar", "[vehicleui]11;[overridebar]13;[bonusbar:1]6;[bonusbar:2]7;[bonusbar:3]8;[bonusbar:4]9;[bonusbar:5]10;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
 	mainbtn:SetAttribute('_onstate-bonusbar', [[
 		scrolloffset = 0
 		newstate = newstate or 0
