@@ -6,11 +6,20 @@ local _, _, _, enabled = GetAddOnInfo("tekPopBar")
 if not enabled then return end
 
 
+-- Druid shapeshifts use bars 7-10
+-- Monk stances use bars 7-9
+-- Priest shadowform uses bar 7
 local _, class = UnitClass("player")
-
-local usebars = {4}
-if class ~= "DRUID" and class ~= "PRIEST" then table.insert(usebars, 7) end
-if class ~= "DRUID" then table.insert(usebars, 8); table.insert(usebars, 9); table.insert(usebars, 10) end
+local usebars
+if class == "DRUID" then
+	usebars = {4}
+elseif class == "MONK" then
+	usebars = {4, 10}
+elseif class == "PRIEST" then
+	usebars = {4, 8, 9, 10}
+else
+	usebars = {4, 7, 8, 9, 10}
+end
 
 
 local gap = -6
