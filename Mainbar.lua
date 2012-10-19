@@ -147,15 +147,6 @@ icon:SetAllPoints()
 icon:SetTexture("Interface\\Icons\\Spell_Shadow_SacrificialShield")
 
 
---------------------------------
---      Bonus Action Bar      --
---------------------------------
-
-local f = CreateFrame("Frame", "BonusActionBarParent", UIParent)
-f:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, -100) f:SetWidth(1) f:SetHeight(1)
-BonusActionBarFrame:SetParent(f)
-
-
 ---------------------------
 --      Possess Bar      --
 ---------------------------
