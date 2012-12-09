@@ -30,17 +30,32 @@ for actionID=1,12 do
 	local mainbtn = ns.factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
 	mainbtn:SetPoint("LEFT", anch1, "RIGHT", (actionID == 4 or actionID == 9) and gap * 2.5 or gap, 0)
 
-	RegisterStateDriver(mainbtn, "bonusbar", "[vehicleui]11;[overridebar]13;[bonusbar:1]6;[bonusbar:2]7;[bonusbar:3]8;[bonusbar:4]9;[bonusbar:5]10;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
+	RegisterStateDriver(mainbtn, "bonusbar", "[petbattle]pet;[vehicleui]11;[overridebar]13;[bonusbar:1]6;[bonusbar:2]7;[bonusbar:3]8;[bonusbar:4]9;[bonusbar:5]10;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
 	mainbtn:SetAttribute('_onstate-bonusbar', [[
 		scrolloffset = 0
-		newstate = newstate or 0
 		baseaction = ]].. actionID..[[
-		if newstate >= 10 then
-		  baseaction = ]].. overridebarlayout[actionID]..[[ + newstate*12
-		elseif newstate >= 6 then
-		  baseaction = ]].. actionID..[[ + newstate*12
+		newstate = newstate or 0
+
+		if newstate == 'pet' then
+			self:SetAttribute("*type*", 'macro')
+			if baseaction <= 3 then
+				self:SetAttribute("*macrotext*", '/run C_PetBattles.UseAbility('..baseaction..')')
+			elseif baseaction == 4 then
+				self:SetAttribute("*macrotext*", '/run PetBattleFrame.BottomFrame.SwitchPetButton:Click()')
+			elseif baseaction == 5 then
+				self:SetAttribute("*macrotext*", '/run PetBattleFrame.BottomFrame.CatchButton:Click()')
+			else
+				self:SetAttribute("*macrotext*", '')
+			end
+		else
+			if newstate >= 10 then
+			  baseaction = ]].. overridebarlayout[actionID]..[[ + newstate*12
+			elseif newstate >= 6 then
+			  baseaction = ]].. actionID..[[ + newstate*12
+			end
+			self:SetAttribute("*type*", 'action')
 		end
-		self:SetAttribute("*type*", 'action')
+
 		self:SetAttribute("*action*", baseaction)
 
 		control:ChildUpdate("offset")
