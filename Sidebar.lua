@@ -32,6 +32,8 @@ for actionID=36,25,-1 do
 	mainbtn:SetAttribute("*type*", "action")
 	mainbtn:SetAttribute("*action*", actionID)
 
+	RegisterStateDriver(mainbtn, "visibility", "[petbattle] hide; show")
+
 	local anch2 = mainbtn
 	local butts = {}
 	for _,bar in ipairs(usebars) do

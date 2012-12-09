@@ -30,6 +30,7 @@ for actionID=1,12 do
 	local mainbtn = ns.factory("tekPopbar"..actionID, UIParent, "ActionBarButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerStateTemplate")
 	mainbtn:SetPoint("LEFT", anch1, "RIGHT", (actionID == 4 or actionID == 9) and gap * 2.5 or gap, 0)
 
+	RegisterStateDriver(mainbtn, "visibility", "[petbattle] hide; show")
 	RegisterStateDriver(mainbtn, "bonusbar", "[petbattle]pet;[vehicleui]11;[overridebar]13;[bonusbar:1]6;[bonusbar:2]7;[bonusbar:3]8;[bonusbar:4]9;[bonusbar:5]10;0") -- See http://www.wowwiki.com/API_GetBonusBarOffset for details
 	mainbtn:SetAttribute('_onstate-bonusbar', [[
 		scrolloffset = 0
