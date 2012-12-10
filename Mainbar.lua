@@ -67,7 +67,7 @@ for actionID=1,12 do
 		scrolloffset = 0
 		baseaction = ]].. actionID)
 	mainbtn:SetAttribute("*action*", actionID)
-	if GetBonusBarOffset() ~= 0 then mainbtn:SetAttribute("state-bonusbar", GetBonusBarOffset()) end
+	if GetBonusBarOffset() ~= 0 then mainbtn:SetAttribute("state-bonusbar", ''..(5 + GetBonusBarOffset())) end
 	mainbtn.action = actionID
 
 	mainbtn:RegisterEvent("UPDATE_BINDINGS")
