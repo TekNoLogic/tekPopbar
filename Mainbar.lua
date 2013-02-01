@@ -178,3 +178,12 @@ PossessBackground2:Hide()
 PossessBackground1.Show = PossessBackground1.Hide
 PossessBackground2.Show = PossessBackground2.Hide
 
+
+--------------------------------
+--      Extra Action Bar      --
+--------------------------------
+
+ExtraActionBarFrame:SetParent(UIParent)
+ExtraActionBarFrame:ClearAllPoints()
+ExtraActionBarFrame:SetPoint("BOTTOM", 0, 160)
+ExtraActionBarFrame:SetAlpha(1)
