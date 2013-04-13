@@ -6,5 +6,4 @@
 
 Button.lua
 Mainbar.lua
-Petbar.lua
 Sidebar.lua

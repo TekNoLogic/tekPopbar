@@ -134,6 +134,29 @@ MainMenuBar:Hide()
 MainMenuBar.Show = MainMenuBar.Hide
 
 
+-----------------------
+--      Pet bar      --
+-----------------------
+
+-- PetActionBarFrame:SetParent(UIParent)
+-- PetActionBarFrame:ClearAllPoints()
+-- PetActionBarFrame:SetPoint("BOTTOMLEFT", tekPopbar12, "BOTTOMRIGHT")
+-- SlidingActionBarTexture0:Hide()
+-- SlidingActionBarTexture1:Hide()
+
+
+local lastf
+for i=1,10 do
+	local f = _G["PetActionButton"..i]
+	f:SetParent(UIParent)
+-- 	f:ClearAllPoints()
+-- 	if lastf then f:SetPoint("LEFT", lastf, "RIGHT", 5, 0) end
+	lastf = f
+end
+
+PetActionButton1:SetPoint("BOTTOMLEFT", tekPopbar12, "BOTTOMRIGHT", 20, 0)
+
+
 ----------------------------
 --      Vehicle crap      --
 ----------------------------
