@@ -2,10 +2,6 @@
 local myname, ns = ...
 
 
-local _, _, _, enabled = GetAddOnInfo("tekPopBar")
-if not enabled then return end
-
-
 -- Druid shapeshifts use bars 7-10
 -- Monk stances use bars 7-9
 -- Priest shadowform uses bar 7
