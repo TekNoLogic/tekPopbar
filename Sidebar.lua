@@ -37,6 +37,7 @@ for actionID=36,25,-1 do
 		local btn = ns.factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerShowHideTemplate")
 		btn:SetAttribute("*type*", "action")
 		btn:SetAttribute("*action*", btnID)
+		btn:SetAttribute("statehidden", true)		
 		btn:SetPoint("RIGHT", anch2, "LEFT", gap, 0)
 
 		btn:Hide()
