@@ -98,7 +98,7 @@ local function OnUpdate(self, elapsed, ...)
 	end
 
 	local oor, isUsable, notEnoughMana = IsActionInRange(id), IsUsableAction(id)
-	local c = notEnoughMana and "blue" or oor == 0 and "red" or isUsable and "none" or "grey"
+	local c = notEnoughMana and "blue" or oor == false and "red" or isUsable and "none" or "grey"
 	self.icon:SetVertexColor(unpack(colors[c]))
 
 	if HasAction(self.action) and self.flashtime then
