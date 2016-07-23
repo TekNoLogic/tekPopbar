@@ -17,7 +17,7 @@ local events = {
 
 
 local function UpdateCooldown(self)
-	CooldownFrame_SetTimer(self.cooldown, GetActionCooldown(self.action))
+	CooldownFrame_Set(self.cooldown, GetActionCooldown(self.action))
 end
 
 
@@ -60,7 +60,7 @@ local function ActionButton_Update(self)
 		end
 
 		ActionButton_UpdateState(self)
-		CooldownFrame_SetTimer(self.cooldown, GetActionCooldown(self.action))
+		CooldownFrame_Set(self.cooldown, GetActionCooldown(self.action))
 		ActionButton_UpdateFlash(self)
 	else
 		self:SetChecked(false)
