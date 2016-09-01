@@ -3,7 +3,6 @@
 -- cat = 7, tree = 8, bear = 9, moon = 10
 -- battle = 7, def = 8, berz = 9
 -- stealth = 7
--- shadow = 6
 
 local myname, ns = ...
 

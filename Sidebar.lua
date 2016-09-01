@@ -4,15 +4,12 @@ local myname, ns = ...
 
 -- Druid shapeshifts use bars 7-10
 -- Monk stances use bars 7-9
--- Priest shadowform uses bar 7
 local _, class = UnitClass("player")
 local usebars
 if class == "DRUID" then
 	usebars = {4}
 elseif class == "MONK" then
 	usebars = {4, 10}
-elseif class == "PRIEST" then
-	usebars = {4, 8, 9, 10}
 else
 	usebars = {4, 7, 8, 9, 10}
 end
@@ -37,7 +34,7 @@ for actionID=36,25,-1 do
 		local btn = ns.factory("tekPopbar"..btnID, mainbtn, "ActionBarButtonTemplate,SecureHandlerShowHideTemplate")
 		btn:SetAttribute("*type*", "action")
 		btn:SetAttribute("*action*", btnID)
-		btn:SetAttribute("statehidden", true)		
+		btn:SetAttribute("statehidden", true)
 		btn:SetPoint("RIGHT", anch2, "LEFT", gap, 0)
 
 		btn:Hide()
