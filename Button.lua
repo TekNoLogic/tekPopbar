@@ -28,7 +28,7 @@ local events = {
 
 
 local function UpdateCooldown(self)
-	CooldownFrame_Set(self.cooldown, GetActionCooldown(self.action))
+	ActionButton_UpdateCooldown(self)
 end
 
 
@@ -193,10 +193,30 @@ local function ActionButton_OnEvent(self, event, action)
 
 	if event == "SPELL_ACTIVATION_OVERLAY_GLOW_SHOW" then
 		local actionType, id, subType = GetActionInfo(self.action)
-		if actionType == "spell" and id == action then ActionButton_ShowOverlayGlow(self) end
+		if actionType == "spell" and id == action then
+			ActionButton_ShowOverlayGlow(self)
+		elseif actionType == "macro" then
+			local _, _, spellId = GetMacroSpell(id)
+			if spellId and spellId == action then
+				ActionButton_ShowOverlayGlow(self)
+			end
+		elseif actionType == "flyout" and FlyoutHasSpell(id, action) then
+			ActionButton_ShowOverlayGlow(self)
+		end
+
 	elseif event == "SPELL_ACTIVATION_OVERLAY_GLOW_HIDE" then
 		local actionType, id, subType = GetActionInfo(self.action)
-		if actionType == "spell" and id == action then ActionButton_HideOverlayGlow(self) end
+		if actionType == "spell" and id == action then
+			ActionButton_HideOverlayGlow(self)
+		elseif actionType == "macro" then
+			local _, _, spellId = GetMacroSpell(id)
+			if spellId and spellId == action then
+				ActionButton_HideOverlayGlow(self)
+			end
+		elseif actionType == "flyout" and FlyoutHasSpell(id, action) then
+			ActionButton_HideOverlayGlow(self)
+		end
+		
 	end
 end
 
@@ -260,6 +280,7 @@ function ns.factory(name, parent, inherit)
 	b:SetCheckedTexture("Interface\\Buttons\\CheckButtonHilight") --ADD
 
 	b.action = ActionButton_CalculateAction(b)
+	SetActionUIButton(b, b.action, b.cooldown)
 	ActionButton_Update(b)
 
 	-- Cleanup
