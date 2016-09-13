@@ -18,6 +18,7 @@ local events = {
 	"PLAYER_AURAS_CHANGED",
 	"PLAYER_ENTER_COMBAT",
 	"PLAYER_LEAVE_COMBAT",
+	"SPELL_UPDATE_CHARGES",
 	"START_AUTOREPEAT_SPELL",
 	"STOP_AUTOREPEAT_SPELL",
 	"TRADE_SKILL_CLOSE",
@@ -49,6 +50,13 @@ local function ActionButton_UpdateFlash(self)
 end
 
 
+local function GetChargesText(self)
+	local charges, maxCharges = GetActionCharges(self.action)
+	if maxCharges > 1 then return charges end
+	return ""
+end
+
+
 local function ActionButton_Update(self)
 	local texture = GetActionTexture(self.action)
 	self.icon:SetTexture(texture)
@@ -61,7 +69,7 @@ local function ActionButton_Update(self)
 		self:SetNormalTexture("Interface\\Buttons\\UI-Quickslot")
 	end
 
-	self.count:SetText((IsConsumableAction(self.action) or IsStackableAction(self.action)) and GetActionCount(self.action) or "")
+	ActionButton_UpdateCount(self)
 
 	if HasAction(self.action) then
 		if not self.eventsRegistered then
@@ -177,6 +185,10 @@ local function ActionButton_OnEvent(self, event, action)
 		self.flashtime = nil
 		self.flash:Hide()
 		return ActionButton_UpdateState(self)
+	end
+
+	if event == "SPELL_UPDATE_CHARGES" then
+		ActionButton_UpdateCount(self)
 	end
 
 	if event == "SPELL_ACTIVATION_OVERLAY_GLOW_SHOW" then
