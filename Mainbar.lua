@@ -68,8 +68,7 @@ for actionID=1,12 do
 	mainbtn:SetAttribute("*action*", actionID)
 	mainbtn.action = actionID
 
-	local _, _, keybind = GetBinding(25 + actionID)
-	if keybind then
+	if ns.GetBinding(actionID) then
 		mainbtn:GetScript("OnEvent")(mainbtn, "UPDATE_BINDINGS")
 	else
 		mainbtn:RegisterEvent("UPDATE_BINDINGS")

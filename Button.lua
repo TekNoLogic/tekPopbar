@@ -2,6 +2,8 @@
 local myname, ns = ...
 
 
+ns.BINDING_OFFSET = 27
+
 local _G = _G
 local function noop() end
 local colors = {
@@ -163,11 +165,7 @@ end
 local function ActionButton_OnEvent(self, event, action)
 	if event == "UPDATE_BINDINGS" then
 		self:UnregisterEvent("UPDATE_BINDINGS")
-		local id = self.action
-		if id <= 12 then
-			local _, _, keybind = GetBinding(25 + id)
-			SetOverrideBindingClick(UIParent, nil, keybind, "tekPopbar"..id)
-		end
+		ns.SetBinding(self.action)
 		return
 	end
 
@@ -216,7 +214,7 @@ local function ActionButton_OnEvent(self, event, action)
 		elseif actionType == "flyout" and FlyoutHasSpell(id, action) then
 			ActionButton_HideOverlayGlow(self)
 		end
-		
+
 	end
 end
 

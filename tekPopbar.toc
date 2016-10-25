@@ -1,8 +1,9 @@
-## Interface: 20300
+## Interface: 70100
 
 ## Title: tekPopbar
 ## Author: Tekkub Stoutwrithe
-## Version: Alpha
+
+services\bindings.lua
 
 Button.lua
 Mainbar.lua
